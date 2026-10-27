@@ -1,0 +1,58 @@
+name: Luanti 5.17 - dva ovladace
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Fetch exact Luanti release
+        shell: pwsh
+        run: |
+          git clone https://github.com/luanti-org/luanti.git source
+          if ($LASTEXITCODE) { throw 'Clone failed' }
+          git -C source checkout c0e6812b1a4260bb25a1f606f70f55f4962bb97d
+          if ($LASTEXITCODE) { throw 'Checkout failed' }
+      - name: Apply local multiplayer patch
+        shell: pwsh
+        run: |
+          [IO.File]::WriteAllBytes("$pwd/source/two-gamepads.patch", [Convert]::FromBase64String('ZGlmZiAtLWdpdCBhL2lyci9zcmMvQ0lyckRldmljZVNETC5jcHAgYi9pcnIvc3JjL0NJcnJEZXZpY2VTREwuY3BwCmluZGV4IGZlZjhiMWIuLjAyZjUzYjggMTAwNjQ0Ci0tLSBhL2lyci9zcmMvQ0lyckRldmljZVNETC5jcHAKKysrIGIvaXJyL3NyYy9DSXJyRGV2aWNlU0RMLmNwcApAQCAtMzk4LDYgKzM5OCw5IEBAIENJcnJEZXZpY2VTREw6OkNJcnJEZXZpY2VTREwoY29uc3QgU0lycmxpY2h0Q3JlYXRpb25QYXJhbWV0ZXJzICZwYXJhbSkgOgogCQlJc0luQmFja2dyb3VuZChmYWxzZSkKIHsKIAlpZiAoKytTRExEZXZpY2VJbnN0YW5jZXMgPT0gMSkgeworCQlpZiAoY29uc3QgY2hhciAqYmFja2dyb3VuZCA9IHN0ZDo6Z2V0ZW52KCJMVUFOVElfR0FNRVBBRF9CQUNLR1JPVU5EIik7CisJCQkJYmFja2dyb3VuZCAmJiBzdGQ6OnN0cmluZyhiYWNrZ3JvdW5kKSA9PSAiMSIpCisJCQlTRExfU2V0SGludChTRExfSElOVF9KT1lTVElDS19BTExPV19CQUNLR1JPVU5EX0VWRU5UUywgIjEiKTsKICNpZmRlZiBfX0FORFJPSURfXwogCQkvLyBCbG9ja2luZyBvbiBwYXVzZSBjYXVzZXMgcHJvYmxlbXMgd2l0aCBtdWx0aXBsYXllci4KIAkJLy8gc2VlIDxodHRwczovL2dpdGh1Yi5jb20vbHVhbnRpLW9yZy9sdWFudGkvaXNzdWVzLzEwODQyPgpAQCAtMTE4OCw2ICsxMTkxLDE3IEBAIGJvb2wgQ0lyckRldmljZVNETDo6cnVuKCkKIAkJCWF1dG8gaWQgPSBTRExfZXZlbnQuY2J1dHRvbi53aGljaDsKIAkJCWlycmV2ZW50LkdhbWVwYWRCdXR0b25FdmVudC5CdXR0b24gPSBzdGF0aWNfY2FzdDxHYW1lcGFkQnV0dG9uPihTRExfZXZlbnQuY2J1dHRvbi5idXR0b24pOwogI2VuZGlmCisJCQlpZiAoY29uc3QgY2hhciAqc2VsZWN0aW9uID0gc3RkOjpnZXRlbnYoIkxVQU5USV9HQU1FUEFEX0lOREVYIikpIHsKKwkJCQljaGFyICplbmQgPSBudWxscHRyOworCQkJCWxvbmcgc2VsZWN0ZWQgPSBzdGQ6OnN0cnRvbChzZWxlY3Rpb24sICZlbmQsIDEwKTsKKwkJCQlsb25nIHJhbmsgPSAwOworCQkJCWZvciAoY29uc3QgYXV0byAmZW50cnkgOiBnYW1lcGFkcykgeworCQkJCQlpZiAoZW50cnkuZmlyc3QgPCBpZCkKKwkJCQkJCSsrcmFuazsKKwkJCQl9CisJCQkJaWYgKCEqc2VsZWN0aW9uIHx8ICplbmQgfHwgc2VsZWN0ZWQgPCAwIHx8IHJhbmsgIT0gc2VsZWN0ZWQpCisJCQkJCWJyZWFrOworCQkJfQogCQkJaXJyZXZlbnQuR2FtZXBhZEJ1dHRvbkV2ZW50LklEID0gaWQ7CiAJCQlpcnJldmVudC5HYW1lcGFkQnV0dG9uRXZlbnQuUHJlc3NlZERvd24gPSAoU0RMX2V2ZW50LnR5cGUgPT0gU0RMX0VWRU5UX0dBTUVQQURfQlVUVE9OX0RPV04pOwogCQkJcmVjZW50R2FtZXBhZElEID0gaWQ7CkBAIC0xMjA2LDYgKzEyMjAsMTcgQEAgYm9vbCBDSXJyRGV2aWNlU0RMOjpydW4oKQogCQkJaXJyZXZlbnQuR2FtZXBhZEF4aXNFdmVudC5BeGlzID0gc3RhdGljX2Nhc3Q8R2FtZXBhZEF4aXM+KFNETF9ldmVudC5jYXhpcy5heGlzKTsKIAkJCWlycmV2ZW50LkdhbWVwYWRBeGlzRXZlbnQuVmFsdWUgPSBTRExfZXZlbnQuY2F4aXMudmFsdWU7CiAjZW5kaWYKKwkJCWlmIChjb25zdCBjaGFyICpzZWxlY3Rpb24gPSBzdGQ6OmdldGVudigiTFVBTlRJX0dBTUVQQURfSU5ERVgiKSkgeworCQkJCWNoYXIgKmVuZCA9IG51bGxwdHI7CisJCQkJbG9uZyBzZWxlY3RlZCA9IHN0ZDo6c3RydG9sKHNlbGVjdGlvbiwgJmVuZCwgMTApOworCQkJCWxvbmcgcmFuayA9IDA7CisJCQkJZm9yIChjb25zdCBhdXRvICZlbnRyeSA6IGdhbWVwYWRzKSB7CisJCQkJCWlmIChlbnRyeS5maXJzdCA8IGlkKQorCQkJCQkJKytyYW5rOworCQkJCX0KKwkJCQlpZiAoISpzZWxlY3Rpb24gfHwgKmVuZCB8fCBzZWxlY3RlZCA8IDAgfHwgcmFuayAhPSBzZWxlY3RlZCkKKwkJCQkJYnJlYWs7CisJCQl9CiAJCQlpcnJldmVudC5HYW1lcGFkQXhpc0V2ZW50LklEID0gaWQ7CiAJCQlyZWNlbnRHYW1lcGFkSUQgPSBpZDsKIAkJCXBvc3RFdmVudEZyb21Vc2VyKGlycmV2ZW50KTsKZGlmZiAtLWdpdCBhL3NyYy9jbGllbnQvZ2FtZS5jcHAgYi9zcmMvY2xpZW50L2dhbWUuY3BwCmluZGV4IDhjNWNjMzUuLmRhN2E0ZDIgMTAwNjQ0Ci0tLSBhL3NyYy9jbGllbnQvZ2FtZS5jcHAKKysrIGIvc3JjL2NsaWVudC9nYW1lLmNwcApAQCAtMSwzICsxLDQgQEAKKyNpbmNsdWRlIDxjc3RkbGliPgogLy8gTHVhbnRpCiAvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTEdQTC0yLjEtb3ItbGF0ZXIKIC8vIENvcHlyaWdodCAoQykgMjAxMC0yMDEzIGNlbGVyb241NSwgUGVydHR1IEFob2xhIDxjZWxlcm9uNTVAZ21haWwuY29tPgpAQCAtMTM2OCw2ICsxMzY5LDEzIEBAIHZvaWQgR2FtZTo6dXBkYXRlU3RhdHMoUnVuU3RhdHMgKnN0YXRzLCBjb25zdCBGcHNDb250cm9sICZkcmF3X3RpbWVzLAogIElucHV0IGhhbmRsaW5nCiAgKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKi8KIAorLy8gT3B0LWluIGxvY2FsIG11bHRpcGxheWVyOiBrZWVwIGdhbWVwYWQgY29udHJvbHMgYWxpdmUgaW4gYmFja2dyb3VuZCB3aW5kb3dzLgorc3RhdGljIGJvb2wgbG9jYWxHYW1lcGFkQmFja2dyb3VuZCgpCit7CisJY29uc3QgY2hhciAqdmFsdWUgPSBzdGQ6OmdldGVudigiTFVBTlRJX0dBTUVQQURfQkFDS0dST1VORCIpOworCXJldHVybiB2YWx1ZSAmJiBzdGQ6OnN0cmluZyh2YWx1ZSkgPT0gIjEiOworfQorCiB2b2lkIEdhbWU6OnByb2Nlc3NVc2VySW5wdXQoZjMyIGR0aW1lKQogewogCWJvb2wgZGVzaXJlZCA9IHNob3VsZFNob3dUb3VjaENvbnRyb2xzKCk7CkBAIC0xMzgwLDcgKzEzODgsOCBAQCB2b2lkIEdhbWU6OnByb2Nlc3NVc2VySW5wdXQoZjMyIGR0aW1lKQogCX0KIAogCS8vIFJlc2V0IGlucHV0IGlmIHdpbmRvdyBub3QgYWN0aXZlIG9yIHNvbWUgbWVudSBpcyBhY3RpdmUKLQlpZiAoIWRldmljZS0+aXNXaW5kb3dBY3RpdmUoKSB8fCBpc01lbnVBY3RpdmUoKSB8fCBndWllbnYtPmhhc0ZvY3VzKGd1aV9jaGF0X2NvbnNvbGUuZ2V0KCkpKSB7CisJaWYgKCghZGV2aWNlLT5pc1dpbmRvd0FjdGl2ZSgpICYmICFsb2NhbEdhbWVwYWRCYWNrZ3JvdW5kKCkpIHx8CisJCQlpc01lbnVBY3RpdmUoKSB8fCBndWllbnYtPmhhc0ZvY3VzKGd1aV9jaGF0X2NvbnNvbGUuZ2V0KCkpKSB7CiAJCWlmIChtX2dhbWVfZm9jdXNlZCkgewogCQkJbV9nYW1lX2ZvY3VzZWQgPSBmYWxzZTsKIAkJCWluZm9zdHJlYW0gPDwgIkdhbWUgbG9zdCBmb2N1cyIgPDwgc3RkOjplbmRsOwpAQCAtMTk0Niw3ICsxOTU1LDE2IEBAIHZvaWQgR2FtZTo6dXBkYXRlQ2FtZXJhRGlyZWN0aW9uKENhbWVyYU9yaWVudGF0aW9uICpjYW0sIGZsb2F0IGR0aW1lKQogCXRoaXMgcmVzdWx0cyBpbiBkdXBsaWNhdGVkIGlucHV0LiBUbyBhdm9pZCB0aGF0LCB3ZSBkb24ndCBlbmFibGUgcmVsYXRpdmUKIAltb3VzZSBtb2RlIGlmIHdlJ3JlIGluIHRvdWNoc2NyZWVuIG1vZGUuICovCiAJaWYgKGN1cl9jb250cm9sKQotCQljdXJfY29udHJvbC0+c2V0UmVsYXRpdmVNb2RlKCFnX3RvdWNoY29udHJvbHMgJiYgIWlzTWVudUFjdGl2ZSgpKTsKKwkJY3VyX2NvbnRyb2wtPnNldFJlbGF0aXZlTW9kZSghZ190b3VjaGNvbnRyb2xzICYmICFpc01lbnVBY3RpdmUoKSAmJgorCQkJCWRldmljZS0+aXNXaW5kb3dGb2N1c2VkKCkpOworCisJaWYgKGxvY2FsR2FtZXBhZEJhY2tncm91bmQoKSAmJiAhZGV2aWNlLT5pc1dpbmRvd0ZvY3VzZWQoKSAmJgorCQkJIWlzTWVudUFjdGl2ZSgpICYmICFndWllbnYtPmhhc0ZvY3VzKGd1aV9jaGF0X2NvbnNvbGUuZ2V0KCkpKSB7CisJCS8vIHVwZGF0ZUNhbWVyYU9yaWVudGF0aW9uIGlnbm9yZXMgbW91c2UgbW92ZW1lbnQgZm9yIHRoaXMgd2luZG93LgorCQl1cGRhdGVDYW1lcmFPcmllbnRhdGlvbihjYW0sIGR0aW1lKTsKKwkJbV9maXJzdF9sb29wX2FmdGVyX3dpbmRvd19hY3RpdmF0aW9uID0gdHJ1ZTsKKwkJcmV0dXJuOworCX0KIAogCWlmICgoZGV2aWNlLT5pc1dpbmRvd0FjdGl2ZSgpICYmIGRldmljZS0+aXNXaW5kb3dGb2N1c2VkKCkKIAkJCSYmICFpc01lbnVBY3RpdmUoKSkgfHwgaW5wdXQtPmlzUmFuZG9tKCkpIHsKQEAgLTIwMDMsNyArMjAyMSw3IEBAIHZvaWQgR2FtZTo6dXBkYXRlQ2FtZXJhT3JpZW50YXRpb24oQ2FtZXJhT3JpZW50YXRpb24gKmNhbSwgZmxvYXQgZHRpbWUpCiAJCS8vIFVzZXIgc2V0dGluZyBpcyBhbHJlYWR5IGFwcGxpZWQgYnkgVG91Y2hDb250cm9scy4KIAkJY2FtLT5jYW1lcmFfeWF3ICAgKz0gZ190b3VjaGNvbnRyb2xzLT5nZXRZYXdDaGFuZ2UoKSAgICogc2Vuc19zY2FsZTsKIAkJY2FtLT5jYW1lcmFfcGl0Y2ggKz0gZ190b3VjaGNvbnRyb2xzLT5nZXRQaXRjaENoYW5nZSgpICogc2Vuc19zY2FsZTsKLQl9IGVsc2UgeworCX0gZWxzZSBpZiAoZGV2aWNlLT5pc1dpbmRvd0ZvY3VzZWQoKSkgewogCQl2MnMzMiBjZW50ZXIoZHJpdmVyLT5nZXRTY3JlZW5TaXplKCkuV2lkdGggLyAyLCBkcml2ZXItPmdldFNjcmVlblNpemUoKS5IZWlnaHQgLyAyKTsKIAkJdjJzMzIgZGlzdCA9IGlucHV0LT5nZXRNb3VzZVBvcygpIC0gY2VudGVyOwogCmRpZmYgLS1naXQgYS9zcmMvY2xpZW50L2lucHV0aGFuZGxlci5jcHAgYi9zcmMvY2xpZW50L2lucHV0aGFuZGxlci5jcHAKaW5kZXggZTE2NmZkMC4uN2Q2NzQ0NyAxMDA2NDQKLS0tIGEvc3JjL2NsaWVudC9pbnB1dGhhbmRsZXIuY3BwCisrKyBiL3NyYy9jbGllbnQvaW5wdXRoYW5kbGVyLmNwcApAQCAtMjY3LDYgKzI2NywxMSBAQCBib29sIE15RXZlbnRSZWNlaXZlcjo6T25FdmVudChjb25zdCBTRXZlbnQgJmV2ZW50KQogCQlyZXR1cm4gZ19tZW51bWdyLnByZXByb2Nlc3NFdmVudChldmVudCk7CiAJfQogCisJaWYgKCFSZW5kZXJpbmdFbmdpbmU6OmdldF9yYXdfZGV2aWNlKCktPmlzV2luZG93Rm9jdXNlZCgpICYmCisJCQkoZXZlbnQuRXZlbnRUeXBlID09IEVFVF9LRVlfSU5QVVRfRVZFTlQgfHwKKwkJCSBldmVudC5FdmVudFR5cGUgPT0gRUVUX01PVVNFX0lOUFVUX0VWRU5UKSkKKwkJcmV0dXJuIGZhbHNlOworCiAJLy8gUmVtZW1iZXIgd2hldGhlciBlYWNoIGtleSBpcyBkb3duIG9yIHVwCiAJaWYgKGdfdG91Y2hjb250cm9scyAmJiBldmVudC5FdmVudFR5cGUgPT0gRUVUX1RPVUNIX0lOUFVUX0VWRU5UKSB7CiAJCS8vIEluIGNhc2Ugb2YgdG91Y2hjb250cm9scywgd2UgaGF2ZSB0byBoYW5kbGUgZGlmZmVyZW50IGV2ZW50cwo='))
+          git -C source apply --check two-gamepads.patch
+          if ($LASTEXITCODE) { throw 'Patch check failed' }
+          git -C source apply two-gamepads.patch
+          if ($LASTEXITCODE) { throw 'Patch failed' }
+      - name: Prepare dependencies
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git deps
+          if ($LASTEXITCODE) { throw 'vcpkg clone failed' }
+          ./deps/bootstrap-vcpkg.bat -disableMetrics
+          if ($LASTEXITCODE) { throw 'Bootstrap failed' }
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake -S source -B build -G "Visual Studio 17 2022" -A x64 "-DCMAKE_TOOLCHAIN_FILE=$pwd/deps/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows -DENABLE_POSTGRESQL=OFF -DENABLE_LUAJIT=TRUE -DREQUIRE_LUAJIT=TRUE -DRUN_IN_PLACE=1
+          if ($LASTEXITCODE) { throw 'Configure failed' }
+      - name: Build and package
+        shell: pwsh
+        run: |
+          cmake --build build --config Release --parallel 4
+          if ($LASTEXITCODE) { throw 'Build failed' }
+          cpack --config build/CPackConfig.cmake -C Release -G ZIP -B package
+          if ($LASTEXITCODE) { throw 'Packaging failed' }
+          $zip = Get-ChildItem package/*.zip | Select-Object -First 1
+          Expand-Archive $zip.FullName -DestinationPath unpacked
+          $exe = Get-ChildItem unpacked -Filter luanti.exe -Recurse | Select-Object -First 1
+          if (!$exe) { throw 'Executable missing' }
+          & $exe.FullName --version
+          if ($LASTEXITCODE) { throw 'Runtime check failed' }
+          $root = $exe.Directory.Parent.FullName
+          [IO.File]::WriteAllBytes("$root/Spustit-dva-hrace.cmd", [Convert]::FromBase64String('QGVjaG8gb2ZmDQpjZCAvZCAiJX5kcDAiDQppZiBub3QgZXhpc3QgYmluXGx1YW50aS5leGUgKA0KIGVjaG8gU3B1c3QgdGVudG8gc291Ym9yIHplIHNsb3preSBzIGJpblxsdWFudGkuZXhlLg0KIHBhdXNlDQogZXhpdCAvYiAxDQopDQppZiBub3QgZXhpc3QgcGxheWVyMS5jb25mICgNCiBpZiBleGlzdCBtaW5ldGVzdC5jb25mIChjb3B5IG1pbmV0ZXN0LmNvbmYgcGxheWVyMS5jb25mID5udWwpIGVsc2UgKHR5cGUgbnVsID5wbGF5ZXIxLmNvbmYpDQopDQppZiBub3QgZXhpc3QgcGxheWVyMi5jb25mIGNvcHkgcGxheWVyMS5jb25mIHBsYXllcjIuY29uZiA+bnVsDQpzZXQgTFVBTlRJX0dBTUVQQURfQkFDS0dST1VORD0xDQpzZXQgTFVBTlRJX0dBTUVQQURfSU5ERVg9MA0Kc3RhcnQgIkhyYWMgMSIgYmluXGx1YW50aS5leGUgLS1jb25maWcgIiVDRCVccGxheWVyMS5jb25mIg0Kc2V0IExVQU5USV9HQU1FUEFEX0lOREVYPTENCnN0YXJ0ICJIcmFjIDIiIGJpblxsdWFudGkuZXhlIC0tY29uZmlnICIlQ0QlXHBsYXllcjIuY29uZiINCg=='))
+          New-Item -ItemType Directory output
+          Compress-Archive -Path "$root/*" -DestinationPath output/Luanti-5.17-dva-ovladace.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Luanti-5.17-dva-ovladace
+          path: output/*.zip
+          if-no-files-found: error
